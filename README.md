@@ -22,6 +22,6 @@ This script will create a tmux session with lazydocker on multiple hosts and hto
 
 - `lazydev`: Creates a tmux session with lazydocker on uno, dos, and tres
 - `lazyprod`: Creates a tmux session with lazydocker on once, doce, and trece
-- `lazysingle`: Creates a tmux session with lazydocker on a single host
+- `lazysingle`: Creates a tmux session with lazydocker on a single host as defined in [lazysingle.sh](aliases/lazysingle.sh)
 
 
