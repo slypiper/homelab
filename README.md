@@ -9,7 +9,7 @@ This script will create a tmux session with lazydocker on multiple hosts and hto
 ### Usage
 
 ```bash
-./tmux_lazydocker_htop.sh --hosts 'host1,host2,host3'
+./tmux_lazydocker_htop.sh --session 'session_name' --hosts 'host1,host2,host3'
 ```
 
 ### Flags
