@@ -14,14 +14,19 @@ This script will create a tmux session with lazydocker on multiple hosts and hto
 
 ### Flags
 
-- `--session`: Name of the tmux session (default: `lazyminirack`)
+- `--session`: Name of the tmux session (required)
+- `--hosts`: Comma-separated list of hosts (required)
+- `--htop`: Add htop to the session (default: `true`)
 - `--htop_size`: Height percentage for the htop panes (default: `25%`)
-- `--hosts`: Comma-separated list of hosts (default: `once,doce,trece`)
+- `--admin`: Add a full-width SSH row at the bottom for admin tasks (default: `false`)
+- `--admin_size`: Height percentage for the admin row (default: `20%`)
+- `--reset`: If already open, close and recreate session (default: `false`)
+- `--kill`: Look for and kill any existing sessions with the same name (default: `false`)
 
 ### Aliases
 
-- `lazydev`: Creates a tmux session with lazydocker on uno, dos, and tres
-- `lazyprod`: Creates a tmux session with lazydocker on once, doce, and trece
-- `lazysingle`: Creates a tmux session with lazydocker on a single host, used as an alias and defined in [lazysingle.sh](aliases/lazysingle.sh)
+- `lazydev`: Creates a tmux session with lazydocker and htop on uno, dos, and tres
+- `lazyprod`: Creates a tmux session with lazydocker and htop on once, doce, and trece
+- `lazysingle`: Creates a tmux session with lazydocker and htop on a single host; Aliasas defined in [lazysingle.sh](aliases/lazysingle.sh)
 
 
