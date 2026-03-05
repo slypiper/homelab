@@ -4,13 +4,20 @@
 source /data/linux/lib/shflags/shflags
 
 # Define Flags
-DEFINE_string 'session' 'lazyminirack' 'Name of the tmux session'
+DEFINE_string 'session' '' 'Name of the tmux session'  # Required
+DEFINE_string 'hosts' '' 'Comma-separated list of hosts'  # Required
+
+# Horizontal split on each host for htop
 DEFINE_boolean 'htop' 'true' 'Add htop to the session'
 DEFINE_string 'htop_size' '25%' 'Height percentage for the htop pane'
-DEFINE_string 'hosts' 'once,doce,trece' 'Comma-separated list of hosts'
+
+# One horizontal split on the first host for admin tasks
 DEFINE_boolean 'admin' 'false' 'Add a full-width SSH row at the bottom for admin tasks'
 DEFINE_string 'admin_size' '20%' 'Height percentage for the admin row'
+
+# Reset and kill flags for tmux session in --session
 DEFINE_boolean 'reset' 'false' 'If already open, close and recreate session'
+DEFINE_boolean 'kill' 'false' 'Look for and kill any existing sessions with the same name'
 
 # Parse command line arguments
 FLAGS "$@" || exit $?
@@ -23,13 +30,24 @@ NUM_HOSTS=${#HOSTS[@]}
 # Ensure at least one host is provided
 if [ "$NUM_HOSTS" -eq 0 ]; then
     echo "Error: No hosts specified."
-    echo "Usage: $0 --hosts 'host1,host2,host3'"
+    echo "Usage: $0 --session 'session_name' --hosts 'host1,host2,host3'"
+    exit 1
+fi
+
+# Ensure a session name is provided
+if [ -z "${FLAGS_session}" ]; then
+    echo "Error: Session name is required."
+    echo "Usage: $0 --session 'session_name' --hosts 'host1,host2,host3'"
     exit 1
 fi
 
 # Check if session exists, if it exists then attach it
 if tmux has-session -t "${FLAGS_session}" 2>/dev/null; then
-    if [ "${FLAGS_reset}" -eq "${FLAGS_TRUE}" ]; then
+    if [ "${FLAGS_kill}" -eq "${FLAGS_TRUE}" ]; then
+        echo "Session ${FLAGS_session} found. Killing..."
+        tmux kill-session -t "${FLAGS_session}"
+        exit 0
+    elif [ "${FLAGS_reset}" -eq "${FLAGS_TRUE}" ]; then
         echo "Session ${FLAGS_session} already exists. Resetting..."
         tmux kill-session -t "${FLAGS_session}"
     else
@@ -37,6 +55,12 @@ if tmux has-session -t "${FLAGS_session}" 2>/dev/null; then
         tmux attach -t "${FLAGS_session}"
         exit 0
     fi
+fi
+
+# If kill flag is set and no session is found, exit
+if [ "${FLAGS_kill}" -eq "${FLAGS_TRUE}" ]; then
+    echo "No session found for ${FLAGS_session}."
+    exit 0
 fi
 
 # Create tmux session with lazydocker on first host
