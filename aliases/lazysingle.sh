@@ -1,0 +1,7 @@
+alias lazyuno="/data/github/homelab/bin/lazysingle uno"
+alias lazydos="/data/github/homelab/bin/lazysingle dos"
+alias lazytres="/data/github/homelab/bin/lazysingle tres"
+alias lazydiez="/data/github/homelab/bin/lazysingle diez"
+alias lazyonce="/data/github/homelab/bin/lazysingle once"
+alias lazydoce="/data/github/homelab/bin/lazysingle doce"
+alias lazytrece="/data/github/homelab/bin/lazysingle trece"

@@ -18,3 +18,10 @@ This script will create a tmux session with lazydocker on multiple hosts and hto
 - `--htop_size`: Height percentage for the htop panes (default: `25%`)
 - `--hosts`: Comma-separated list of hosts (default: `once,doce,trece`)
 
+### Aliases
+
+- `lazydev`: Creates a tmux session with lazydocker on uno, dos, and tres
+- `lazyprod`: Creates a tmux session with lazydocker on once, doce, and trece
+- `lazysingle`: Creates a tmux session with lazydocker on a single host
+
+

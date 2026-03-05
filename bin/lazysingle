@@ -1,0 +1,15 @@
+#!/bin/bash
+
+# Example usage:
+#  alias lazysol="/data/github/homelab/bin/lazysingle sol"
+#  $ lazysol
+
+HOST=$1
+shift
+
+if [ -z "$HOST" ]; then
+  echo "Error: Hostname is required as an argument." >&2
+  exit 1
+fi
+
+/data/github/homelab/tmux_lazydocker_htop.sh --session lazy${HOST} --hosts ${HOST} "$@"
