@@ -1,4 +1,4 @@
 #!/bin/bash
 
 SESSION=$(basename "$0")
-/data/github/homelab/tmux_lazydocker_htop.sh --session "$SESSION" --hosts once,doce,trece "$@"
+/data/github/homelab/docker_monitor.sh --session "$SESSION" --hosts once,doce,trece "$@"

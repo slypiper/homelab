@@ -12,4 +12,4 @@ if [ -z "$HOST" ]; then
   exit 1
 fi
 
-/data/github/homelab/tmux_lazydocker_htop.sh --session lazy${HOST} --hosts ${HOST} "$@"
+/data/github/homelab/docker_monitor.sh --session lazy${HOST} --hosts ${HOST} "$@"
