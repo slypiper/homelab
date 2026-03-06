@@ -6,9 +6,11 @@ An assortment of homelab centered scripts around running services and exploring 
 
 ## docker_monitor.sh
 
-This script will create a tmux session with lazydocker on multiple hosts and htop on each host. It will split the tmux session into columns for each host and then split each column in half to add htop. It will then resize the htop panes to a specified percentage of the tmux session height.
+This script will create a tmux session with `lazydocker` on multiple hosts and htop on each host. It will split the tmux session into columns for each host and then split each column in half to add htop. It will then resize the htop panes to a specified percentage of the tmux session height.`
 
 ### Usage
+
+![docker_monitor.sh example](docker-manager-example.png)
 
 ```bash
 ./docker_monitor.sh --session 'session_name' --hosts 'host1,host2,host3'
@@ -44,12 +46,11 @@ A modular system check and fix utility designed for Homelab infrastructure. It s
 
 ### Usage
 
+![fix.sh example](fix-example.png)
+
 ```bash
 fix
 ```
-
-![fix.sh example](fix-example.png)
-
 ### Flags
 
 - `--apply (-a)`: Automatically apply all proposed fixes without confirmation.
