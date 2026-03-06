@@ -30,7 +30,13 @@ def get_available_categories() -> set[str]:
         log_fail(f"CRITICAL: Directory {BASE_DIR} does not exist.")
         sys.exit(1)
     
-    return {f[:-4] for f in os.listdir(BASE_DIR) if f.endswith('.yml')}
+    categories = set()
+    for filename in os.listdir(BASE_DIR):
+        if filename.endswith('.yml'):
+            category_name, _ = os.path.splitext(filename)
+            categories.add(category_name)
+            
+    return categories
 
 def get_channel_details(handle_input: str) -> tuple[str, str]:
     """Uses yt-dlp to get the canonical ID and Handle."""
