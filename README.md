@@ -104,6 +104,8 @@ glance_youtube.py -l
 
 The files populated by this tool exist in `/data/docker/glance/config/yt` which is used in the docker configuration for `glance`. My glance pages use a similar structure to import the files: 
 
+![glance config example](glance-example.png)
+
 ```bash
 ❯ grep -B1 -A5 "title: Makers" config/youtube.yml 
         - type: videos
