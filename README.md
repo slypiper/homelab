@@ -10,7 +10,7 @@ This script will create a tmux session with `lazydocker` on multiple hosts and h
 
 ### Usage
 
-![docker_monitor.sh example](docker-manager-example.png)
+![docker_monitor.sh example](docker-monitor-example.png)
 
 ```bash
 ./docker_monitor.sh --session 'session_name' --hosts 'host1,host2,host3'
