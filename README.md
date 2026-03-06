@@ -48,6 +48,8 @@ A modular system check and fix utility designed for Homelab infrastructure. It s
 fix
 ```
 
+![fix.sh example](fix-example.png)
+
 ### Flags
 
 - `--apply (-a)`: Automatically apply all proposed fixes without confirmation.
