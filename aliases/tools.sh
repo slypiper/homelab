@@ -1,0 +1,1 @@
+alias fix="/data/github/homelab/fix.sh"
