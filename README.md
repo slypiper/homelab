@@ -88,16 +88,19 @@ glance_youtube.py --find tested
 
 # List all available categories
 glance_youtube.py -l
+
+# List channels in specific categories (sorted)
+glance_youtube.py -l makers family
 ```
 
 ### Flags
 
-- `--add QUERY`: Add a channel by ID or handle to categories specified as positional arguments.
-- `--remove QUERY`: Remove a channel by ID or handle. If an optional category is provided as a positional argument, it only removes from that category.
-- `--find QUERY (-f)`: Search for matches by handle or ID across all categories.
-- `--list_categories (-l)`: List available categories and their groupings.
-- `--restart_glance (-r)`: Automatically trigger restart webhook if changes occur.
-- `--force`: Assume "yes" for all prompts (removal confirmation and restart prompt).
+- `--add QUERY`: Add a channel by ID or handle. QUERY: 'handle/ID category [category] ...'
+- `--remove QUERY`: Remove channel(s) by search term. QUERY: 'search-term [category]'
+- `--find QUERY (-f)`: Search for a channel by ID or handle (case-insensitive).
+- `--list (-l) [CAT ...]`: List categories. If category(s) specified, list channels in those categories.
+- `--restart (-r)`: Trigger restart of the glance service via webhook after processing.
+- `--force`: Force default selection at any prompt (e.g., skip confirmation for removal or restart).
 - `--get_id HANDLE`: Fetch the canonical YouTube ID for a handle and exit.
 
 ### Glance integration

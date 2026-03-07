@@ -338,21 +338,29 @@ def main():
 
     if args.list:
         if isinstance(args.list, str):
-            # List channels in specific category
-            cat = normalize_category(args.list, available_cats)
-            results = search_channels("", available_cats, quiet=True, category_limit=cat)
-            
-            if not results:
-                log_fail(f"No channels found in category '{cat}'.")
-                sys.exit(1)
-            
-            # Sort by handle (case-insensitive)
-            results.sort(key=lambda x: x['handle'].lstrip('@').lower())
-            
-            log_info(f"Channels in '{cat}':")
-            for r in results:
-                print(f"  {CYAN}{r['cat']}:{RESET} {BOLD}{r['handle']}{RESET} {r['cid']}")
-            print()
+            # Collect all requested categories
+            requested_cats_raw = [args.list]
+            if args.handle: 
+                requested_cats_raw.append(args.handle)
+            requested_cats_raw.extend(args.categories)
+
+            # Resolve all categories first to catch errors early
+            resolved_cats = [normalize_category(c, available_cats) for c in requested_cats_raw]
+
+            for cat in resolved_cats:
+                results = search_channels("", available_cats, quiet=True, category_limit=cat)
+                
+                if not results:
+                    log_warn(f"No channels found in category '{cat}'.")
+                    continue
+                
+                # Sort by handle (case-insensitive)
+                results.sort(key=lambda x: x['handle'].lstrip('@').lower())
+                
+                log_info(f"Channels in '{cat}':")
+                for r in results:
+                    print(f"  {CYAN}{r['cat']}:{RESET} {BOLD}{r['handle']}{RESET} {r['cid']}")
+                print()
             sys.exit(0)
         else:
             # List available categories (existing behavior)
