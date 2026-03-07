@@ -12,12 +12,12 @@ DEFINE_boolean 'htop' 'true' 'Add htop to the session'
 DEFINE_string 'htop_size' '25%' 'Height percentage for the htop pane'
 
 # One horizontal split on the first host for admin tasks
-DEFINE_boolean 'admin' 'false' 'Add a full-width SSH row at the bottom for admin tasks'
+DEFINE_boolean 'admin' 'false' 'Add a full-width SSH row at the bottom for admin tasks' 'a'
 DEFINE_string 'admin_size' '20%' 'Height percentage for the admin row'
 
 # Reset and kill flags for tmux session in --session
-DEFINE_boolean 'reset' 'false' 'If already open, close and recreate session'
-DEFINE_boolean 'kill' 'false' 'Look for and kill any existing sessions with the same name'
+DEFINE_boolean 'reset' 'false' 'If already open, close and recreate session' 'r'
+DEFINE_boolean 'kill' 'false' 'Look for and kill any existing sessions with the same name' 'k'
 
 # Parse command line arguments
 FLAGS "$@" || exit $?
@@ -93,6 +93,9 @@ tmux set-option -t "${FLAGS_session}" mouse on
 # Select the top-left pane
 if [ "${FLAGS_admin}" -ne "${FLAGS_TRUE}" ]; then
     tmux select-pane -t "${FLAGS_session}:0.0"
+else
+    # Run clear in the admin pane
+    tmux send-keys -t "${FLAGS_session}" "clear" C-m
 fi
 
 # Attach to the session

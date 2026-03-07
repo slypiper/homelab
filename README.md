@@ -6,7 +6,7 @@ An assortment of homelab centered scripts around running services and exploring 
 
 ## docker_monitor.sh
 
-This script will create a tmux session with `lazydocker` on multiple hosts and htop on each host. It will split the tmux session into columns for each host and then split each column in half to add htop. It will then resize the htop panes to a specified percentage of the tmux session height.`
+This script creates a tmux session with `lazydocker` and `htop` on multiple hosts. It organizes the session into columns for each host, splits each column to add `htop`, and can optionally add a full-width **Admin Pane** at the bottom for quick terminal access. If the admin pane is enabled, it automatically runs `clear` to provide a clean workspace.
 
 ### Usage
 
@@ -22,10 +22,10 @@ This script will create a tmux session with `lazydocker` on multiple hosts and h
 - `--hosts`: Comma-separated list of hosts (required)
 - `--htop`: Add htop to the session (default: `true`)
 - `--htop_size`: Height percentage for the htop panes (default: `25%`)
-- `--admin`: Add a full-width SSH row at the bottom for admin tasks (default: `false`)
+- `--admin (-a)`: Add a full-width SSH row at the bottom for admin tasks (default: `false`)
 - `--admin_size`: Height percentage for the admin row (default: `20%`)
-- `--reset`: If already open, close and recreate session (default: `false`)
-- `--kill`: Look for and kill any existing sessions with the same name (default: `false`)
+- `--reset (-r)`: If already open, close and recreate session (default: `false`)
+- `--kill (-k)`: Look for and kill any existing sessions with the same name (default: `false`)
 
 ### Aliases
 
