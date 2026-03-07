@@ -294,11 +294,11 @@ def add_handle(handle_input: str, categories_raw: list[str]) -> bool:
 def main():
     parser = argparse.ArgumentParser(description="Add YouTube channels to Glance YAML config.")
     
-    parser.add_argument("-l", "--list_categories", action="store_true", help="List available categories and exit")   
-    parser.add_argument("-r", "--restart_glance", action="store_true", help="Trigger Glance restart webhook after processing")
-    parser.add_argument("--add", metavar="QUERY", help="Add a channel by ID or Handle to categories specified in --categories")
-    parser.add_argument("--remove", metavar="QUERY", help="Remove a channel by ID or Handle across all categories")
-    parser.add_argument("-f", "--find", metavar="QUERY", help="Search for a channel by ID or Handle across all categories")
+    parser.add_argument("-l", "--list", nargs="?", const=True, help="List categories, or if a category is specified, list channels in that category")   
+    parser.add_argument("-r", "--restart", action="store_true", help="Trigger restart of the glance service via webhook")
+    parser.add_argument("--add", metavar="QUERY", help="Add channel by ID or Handle, QUERY: 'handle/ID category [category] ...'")
+    parser.add_argument("--remove", metavar="QUERY", help="Remove channel(s) by search term, QUERY: 'search-term [category]'")
+    parser.add_argument("-f", "--find", metavar="QUERY", help="Search for a channel by ID or Handle (case-insensitive), QUERY: 'search-term'")
     parser.add_argument("--get_id", metavar="HANDLE", help="Fetch the canonical YouTube ID for a handle")
     parser.add_argument("--force", action="store_true", help="Force default selection at any prompt")
     parser.add_argument("handle", nargs="?", help="YouTube handle (e.g. @modustrial)")
@@ -320,7 +320,7 @@ def main():
         changed = add_handle(args.add, categories_raw)
 
         if changed: 
-            prompt_restart(args.restart_glance, args.force)
+            prompt_restart(args.restart, args.force)
 
         sys.exit(0)
 
@@ -332,20 +332,39 @@ def main():
         changed = remove_channels(args.remove, available_cats, force=args.force, category_limit=category_limit)
         
         if changed: 
-            prompt_restart(args.restart_glance, args.force)
+            prompt_restart(args.restart, args.force)
 
         sys.exit(0)
 
-    if args.list_categories:
-        log_info("Available YT Categories:")
-        for group, items in [("Favorites", HOME_GROUP), ("Regional/News", NEWS_GROUP)]:
-            matching = [c for c in sorted(items) if c in available_cats]
-            if matching: print(f"  {CYAN}{group:<15}{RESET} {', '.join(matching)}")
-        
-        others = sorted([c for c in available_cats if c not in (HOME_GROUP | NEWS_GROUP)])
-        if others: print(f"  {CYAN}{'Other Content':<15}{RESET} {', '.join(others)}")
-        print()
-        sys.exit(0)
+    if args.list:
+        if isinstance(args.list, str):
+            # List channels in specific category
+            cat = normalize_category(args.list, available_cats)
+            results = search_channels("", available_cats, quiet=True, category_limit=cat)
+            
+            if not results:
+                log_fail(f"No channels found in category '{cat}'.")
+                sys.exit(1)
+            
+            # Sort by handle (case-insensitive)
+            results.sort(key=lambda x: x['handle'].lstrip('@').lower())
+            
+            log_info(f"Channels in '{cat}':")
+            for r in results:
+                print(f"  {CYAN}{r['cat']}:{RESET} {BOLD}{r['handle']}{RESET} {r['cid']}")
+            print()
+            sys.exit(0)
+        else:
+            # List available categories (existing behavior)
+            log_info("Available YT Categories:")
+            for group, items in [("Favorites", HOME_GROUP), ("Regional/News", NEWS_GROUP)]:
+                matching = [c for c in sorted(items) if c in available_cats]
+                if matching: print(f"  {CYAN}{group:<15}{RESET} {', '.join(matching)}")
+            
+            others = sorted([c for c in available_cats if c not in (HOME_GROUP | NEWS_GROUP)])
+            if others: print(f"  {CYAN}{'Other Content':<15}{RESET} {', '.join(others)}")
+            print()
+            sys.exit(0)
 
     if args.find:
         search_channels(args.find, available_cats)
@@ -356,7 +375,7 @@ def main():
         log_success(f"Found ID for {args.get_id}: {cid}")
         sys.exit(0)
 
-    if args.restart_glance:
+    if args.restart:
         trigger_restart()
         sys.exit(0)
 
