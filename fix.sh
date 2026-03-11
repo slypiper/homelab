@@ -1,6 +1,10 @@
 #!/bin/bash
 
-# Source shflags
+# Source My Libraries
+source "/data/github/homelab/lib/common.sh"
+source "/data/github/homelab/lib/spinner.sh"
+
+# Source Third Party Libraries
 source /data/linux/lib/shflags/shflags
 
 IFS= read -r -d '' HEADER <<'EOF'
@@ -38,25 +42,10 @@ if [ "${FLAGS_quiet}" -eq "${FLAGS_TRUE}" ]; then
     FLAGS_debug="${FLAGS_FALSE}"
     FLAGS_header="${FLAGS_FALSE}"
 fi
-
-# Source Common Library
 MODULE_DIR="/data/github/homelab/fix-modules"
-source "${MODULE_DIR}/common.sh"
 
 # Global State
 FIX_COMMANDS=()
-
-declare -A OS_INFO
-if [ -f /etc/os-release ]; then
-    . /etc/os-release
-    OS_INFO[NAME]=$NAME
-    OS_INFO[ID]=$ID
-    OS_INFO[VERSION]=$VERSION
-else
-    OS_INFO[NAME]=$(uname -s)
-    OS_INFO[ID]="unknown"
-    OS_INFO[VERSION]=$(uname -r)
-fi
 
 if [ "${FLAGS_header}" -eq "${FLAGS_TRUE}" ]; then
     if command -v figlet >/dev/null 2>&1 && command -v lolcat >/dev/null 2>&1; then

@@ -10,7 +10,7 @@ This script creates a tmux session with `lazydocker` and `htop` on multiple host
 
 ### Usage
 
-![docker_monitor.sh example](docker-monitor-example.png)
+![docker_monitor.sh example](img/docker-monitor-example.png)
 
 ```bash
 ./docker_monitor.sh --session 'session_name' --hosts 'host1,host2,host3'
@@ -46,7 +46,7 @@ A modular system check and fix utility designed for Homelab infrastructure. It s
 
 ### Usage
 
-![fix.sh example](fix-example.png)
+![fix.sh example](img/fix-example.png)
 
 ```bash
 fix
@@ -107,7 +107,7 @@ glance_youtube.py -l makers family
 
 The files populated by this tool exist in `/data/docker/glance/config/yt` which is used in the docker configuration for `glance`. My glance pages use a similar structure to import the files: 
 
-![glance config example](glance-example.png)
+![glance config example](img/glance-example.png)
 
 ```bash
 ❯ grep -B1 -A5 "title: Makers" config/youtube.yml 
