@@ -87,7 +87,10 @@ spinner() {
     local handler=$2
 
     if [ "${FLAGS_info}" -eq "${FLAGS_FALSE}" ]; then
-        wait "${MODULE_PIDS[@]}" 2>/dev/null
+        for idx in "${!MODULE_PIDS[@]}"; do
+            wait "${MODULE_PIDS[$idx]}" 2>/dev/null
+            $handler "${MODULE_NAMES[$idx]}" "${MODULE_PIDS[$idx]}"
+        done
         return
     fi
 
