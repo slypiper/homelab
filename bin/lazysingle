@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Example usage:
-#  alias lazysol="/data/linux/bin/lazysingle sol"
+#  alias lazysol="/data/bin/lazysingle sol"
 #  $ lazysol
 
 HOST=$1

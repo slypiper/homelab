@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Source shflags
-source /data/linux/lib/shflags/shflags
+source /data/src/shflags/shflags
 
 # Define Flags
 DEFINE_string 'session' '' 'Name of the tmux session'  # Required

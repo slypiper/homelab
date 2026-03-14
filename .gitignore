@@ -1,0 +1,9 @@
+
+# Repositories
+src/*
+
+# Excluded Paths
+archive/
+scripts/
+
+*bashrc*
