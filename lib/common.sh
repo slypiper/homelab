@@ -31,6 +31,26 @@ else
     OS_INFO[VERSION]=$(uname -r)
 fi
 
+common_ARCH=$(uname -m)
+
+define_standard_flags() {
+    DEFINE_boolean 'quiet' 'false' 'Suppress all optional output' 'q'
+    DEFINE_boolean 'success' 'true' 'Show success messages'
+    DEFINE_boolean 'warning' 'true' 'Show warning messages'
+    DEFINE_boolean 'info' 'true' 'Show info messages'
+    DEFINE_boolean 'debug' 'false' 'Show debug messages' 'd'
+    DEFINE_boolean 'apply' 'false' 'Apply fixes automatically' 'a'
+}
+
+handle_quiet_mode() {
+    if [ "${FLAGS_quiet}" -eq "${FLAGS_TRUE}" ]; then
+        FLAGS_success="${FLAGS_FALSE}"
+        FLAGS_warning="${FLAGS_FALSE}"
+        FLAGS_info="${FLAGS_FALSE}"
+        FLAGS_debug="${FLAGS_FALSE}"
+    fi
+}
+
 _printf_aligned() {
     local icon=$1
     local color=$2
@@ -103,3 +123,27 @@ confirm() {
     fi
     return 1
 }
+
+check_installed() {
+    for path in "$@"; do
+        if [ ! -e "$path" ]; then
+            return 0 # Not installed
+        fi
+    done
+
+    # If all paths exist, skip unless forced
+    if [ "${FLAGS_force:-${FLAGS_FALSE}}" -eq "${FLAGS_TRUE}" ]; then
+        return 0
+    fi
+
+    printf_warning "SKIP" "Already installed: $*"
+    return 2 # Skip code
+}
+
+# Namespaced aliases for tools
+common::printf_success() { printf_success "$@"; }
+common::printf_warning() { printf_warning "$@"; }
+common::printf_error() { printf_error "$@"; }
+common::printf_info() { printf_info "$@"; }
+common::printf_debug() { printf_debug "$@"; }
+common::check_installed() { check_installed "$@"; }

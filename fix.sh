@@ -1,20 +1,11 @@
 #!/bin/bash
 
 # Source My Libraries
-source "/data/github/homelab/lib/common.sh"
-source "/data/github/homelab/lib/spinner.sh"
+source "/data/linux/lib/common.sh"
+source "/data/linux/lib/spinner.sh"
 
 # Source Third Party Libraries
 source /data/linux/lib/shflags/shflags
-
-IFS= read -r -d '' HEADER <<'EOF'
- _____ _      _____ _     _     __  __            _     _            
-|  ___(_)_  _|_   _| |__ (_)___|  \/  | __ _  ___| |__ (_)_ __   ___ 
-| |_  | \ \/ / | | | '_ \| / __| |\/| |/ _` |/ __| '_ \| | '_ \ / _ \
-|  _| | |>  <  | | | | | | \__ \ |  | | (_| | (__| | | | | | | |  __/
-|_|   |_/_/\_\ |_| |_| |_|_|___/_|  |_|\__,_|\___|_| |_|_|_| |_|\___|
-EOF
-
 
 # Define Flags
 DEFINE_boolean 'header' 'true' 'Show header'
@@ -42,7 +33,7 @@ if [ "${FLAGS_quiet}" -eq "${FLAGS_TRUE}" ]; then
     FLAGS_debug="${FLAGS_FALSE}"
     FLAGS_header="${FLAGS_FALSE}"
 fi
-MODULE_DIR="/data/github/homelab/fix-modules"
+MODULE_DIR="/data/linux/fix-modules"
 
 # Global State
 FIX_COMMANDS=()
@@ -51,11 +42,6 @@ if [ "${FLAGS_header}" -eq "${FLAGS_TRUE}" ]; then
     if command -v figlet >/dev/null 2>&1 && command -v lolcat >/dev/null 2>&1; then
         clear
         figlet "FixThisMachine" | lolcat
-        echo
-    else
-        clear
-        echo
-        echo "${HEADER}"
         echo
     fi
 fi

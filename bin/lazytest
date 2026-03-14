@@ -1,4 +1,4 @@
 #!/bin/bash
 
 SESSION=$(basename "$0")
-/data/github/homelab/docker_monitor.sh --session "$SESSION" --hosts veintiuno,veintidos,veintitres "$@"
+/data/linux/docker_monitor.sh --session "$SESSION" --hosts veintiuno,veintidos,veintitres "$@"

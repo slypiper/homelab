@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Example usage:
-#  alias lazysol="/data/github/homelab/bin/lazysingle sol"
+#  alias lazysol="/data/linux/bin/lazysingle sol"
 #  $ lazysol
 
 HOST=$1
@@ -12,4 +12,4 @@ if [ -z "$HOST" ]; then
   exit 1
 fi
 
-/data/github/homelab/docker_monitor.sh --session lazy${HOST} --hosts ${HOST} "$@"
+/data/linux/docker_monitor.sh --session lazy${HOST} --hosts ${HOST} "$@"
