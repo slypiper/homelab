@@ -6,4 +6,7 @@ src/*
 archive/
 scripts/
 
+# Exclude kube config (certs)
+config/kube
+
 *bashrc*
