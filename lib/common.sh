@@ -96,9 +96,8 @@ printf_debug() {
 }
 
 printf_prompt() {
-    _printf_aligned "${PROMPT_ICON}" "${MAGENTA}${BOLD}" "$1" "$2" "$3" " "
+    _printf_aligned "${PROMPT_ICON}" "${MAGENTA}${BOLD}" "$1" "$2" "$3" " " >&2
 }
-
 
 printf_simple() {
     if [ "${FLAGS_info}" -eq "${FLAGS_FALSE}" ]; then return; fi
@@ -112,7 +111,6 @@ confirm() {
         return 0
     fi
 
-    printf "\n"
     printf_prompt "PROCEED" "${BOLD}${prompt} [Y/n] ${RESET}"
     
     read -r response
@@ -122,6 +120,19 @@ confirm() {
         return 0
     fi
     return 1
+}
+
+ask() {
+    local prompt=$1
+    local default=$2
+    
+    printf_prompt "INPUT" "${prompt}${default:+ [${default}]}: "
+    read -r response
+    if [[ -z "$response" ]]; then
+        echo "$default"
+    else
+        echo "$response"
+    fi
 }
 
 check_installed() {
