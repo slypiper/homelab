@@ -4,7 +4,7 @@ An assortment of homelab centered scripts around running services and exploring 
 
 
 
-## docker_monitor.sh
+## scripts/docker_monitor.sh
 
 This script creates a tmux session with `lazydocker` and `htop` on multiple hosts. It organizes the session into columns for each host, splits each column to add `htop`, and can optionally add a full-width **Admin Pane** at the bottom for quick terminal access. If the admin pane is enabled, it automatically runs `clear` to provide a clean workspace.
 
@@ -12,8 +12,9 @@ This script creates a tmux session with `lazydocker` and `htop` on multiple host
 
 ![docker_monitor.sh example](img/docker-monitor-example.png)
 
+
 ```bash
-./docker_monitor.sh --session 'session_name' --hosts 'host1,host2,host3'
+/data/linux/scripts/docker_monitor.sh --session 'session_name' --hosts 'host1,host2,host3'
 ```
 
 ### Flags
@@ -32,15 +33,15 @@ This script creates a tmux session with `lazydocker` and `htop` on multiple host
 - `lazydev`: Creates a tmux session with lazydocker and htop on uno, dos, and tres
 - `lazyprod`: Creates a tmux session with lazydocker and htop on once, doce, and trece
 
-## fix.sh
+## scripts/fix
 
-A modular system check and fix utility designed for Homelab infrastructure. It scans and runs parallel checks across multiple system components (like DNS, updates, and reboots) and provides an interactive dashboard to apply proposed fixes.
+A modular system check and fix utility designed for Homelab infrastructure. It scans and runs parallel checks across multiple system components (like checking CLI tools, Bashrc synchronization, and SSH key states) and provides an interactive dashboard to apply proposed fixes.
 
 ### Features
 
 - **Parallel Execution**: Runs all system modules simultaneously in the background.
 - **Live Dashboard**: Provides a real-time terminal UI showing active and completed checks.
-- **Modular**: Automatically discovers and loads check modules from the `fix-modules/` directory.
+- **Modular**: Automatically discovers and loads check modules from the `scripts/fix/modules/` directory.
 - **Cross-Platform**: Built-in support for Ubuntu (apt/ESM) and Arch Linux (pacman/AUR).
 - **Interactive Fixes**: Proposes terminal commands to fix detected issues and applies them upon confirmation.
 
@@ -62,7 +63,17 @@ fix
 - `--debug (-d)`: Enable verbose output for troubleshooting. (Default: Hidden)
 - `--security_updates`: Show Ubuntu ESM/Pro security updates in the report. (Default: Hidden)
 
-## glance_youtube.py
+## scripts/glance_watcher.sh
+
+A highly optimized file watching utility that monitors the Glance configuration directory. When changes to `.yml` or `.yaml` files are detected, it forcefully reloads the Docker Swarm `dash_glance` service. 
+
+### Features
+
+- **Zero-CPU Idling**: Prefers `inotifywait` to handle real-time kernel filesystem events with 0 overhead.
+- **Graceful Fallback**: Automatically senses NFS mounts and falls back to a clean timestamp polling loop if `inotify` is unsupported.
+- **Tmux Integration**: Native remote host-jumping. Automatically creates and launches itself inside a detached `glance_watcher` tmux session on the target host.
+
+## scripts/glance_youtube.py
 
 A utility for managing YouTube channels within [Glance](https://github.com/glanceapp/glance) configuration files. It handles fetching channel details via `yt-dlp`, normalizing categories, and triggering Glance restarts via webhooks.
 
@@ -78,19 +89,19 @@ A utility for managing YouTube channels within [Glance](https://github.com/glanc
 
 ```bash
 # Add a channel to specific categories
-glance_youtube.py --add @JeffGeerling homelab makers
+/data/linux/scripts/glance_youtube.py --add @JeffGeerling homelab makers
 
 # Remove a channel (optionally from a specific category)
-glance_youtube.py --remove @JeffGeerling homelab
+/data/linux/scripts/glance_youtube.py --remove @JeffGeerling homelab
 
 # Search for a channel
-glance_youtube.py --find tested
+/data/linux/scripts/glance_youtube.py --find tested
 
 # List all available categories
-glance_youtube.py -l
+/data/linux/scripts/glance_youtube.py -l
 
 # List channels in specific categories (sorted)
-glance_youtube.py -l makers family
+/data/linux/scripts/glance_youtube.py -l makers family
 ```
 
 ### Flags
