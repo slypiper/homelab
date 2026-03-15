@@ -12,4 +12,4 @@ if [ -z "$HOST" ]; then
   exit 1
 fi
 
-/data/linux/docker_monitor.sh --session lazy${HOST} --hosts ${HOST} "$@"
+/data/linux/scripts/docker_monitor.sh --session lazy${HOST} --hosts ${HOST} "$@"
