@@ -1,12 +1,9 @@
-
 # Repositories
 src/*
 
 # Excluded Paths
 archive/
-scripts/
+scripts.orig/
 
-# Exclude kube config (certs)
-config/kube
-
-*bashrc*
+# Exclude Secrets
+config/secrets/

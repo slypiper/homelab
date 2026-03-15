@@ -2,7 +2,7 @@
 
 fix_module() {
     local auth_keys="/home/tzappe/.ssh/authorized_keys"
-    local pub_key_source="/data/linux/ssh/homelab.pub"
+    local pub_key_source="/data/ssh/homelab.pub"
     local comment="homelab2026"
 
     # Ensure source exists

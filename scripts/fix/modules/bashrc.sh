@@ -7,7 +7,7 @@ fix_module() {
     fi
 
     local target_bashrc="${HOME}/.bashrc"
-    local source_bashrc="/data/linux/ubuntu.bashrc"
+    local source_bashrc="/data/linux/config/bashrc"
 
     # Ensure source exists
     if [ ! -f "$source_bashrc" ]; then

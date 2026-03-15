@@ -1,7 +1,7 @@
 #!/bin/bash
 
 fix_module() {
-    local install_script="/data/linux/scripts/cli-tools/install.sh"
+    local install_script="/data/linux/scripts.orig/cli-tools/install.sh"
 
     # Ensure script exists
     if [ ! -f "$install_script" ]; then

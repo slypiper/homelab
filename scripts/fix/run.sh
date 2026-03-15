@@ -5,7 +5,7 @@ source "/data/linux/lib/common.sh"
 source "/data/linux/lib/spinner.sh"
 
 # Source Third Party Libraries
-source /data/linux/lib/shflags/shflags
+source /data/linux/src/shflags/shflags
 
 # Define Flags
 DEFINE_boolean 'header' 'true' 'Show header'
@@ -33,7 +33,7 @@ if [ "${FLAGS_quiet}" -eq "${FLAGS_TRUE}" ]; then
     FLAGS_debug="${FLAGS_FALSE}"
     FLAGS_header="${FLAGS_FALSE}"
 fi
-MODULE_DIR="/data/linux/fix-modules"
+MODULE_DIR="/data/linux/scripts/fix/modules"
 
 # Global State
 FIX_COMMANDS=()
