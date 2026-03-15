@@ -69,9 +69,21 @@ A highly optimized file watching utility that monitors the Glance configuration 
 
 ### Features
 
-- **Zero-CPU Idling**: Prefers `inotifywait` to handle real-time kernel filesystem events with 0 overhead.
-- **Graceful Fallback**: Automatically senses NFS mounts and falls back to a clean timestamp polling loop if `inotify` is unsupported.
+- **Efficient Polling**: Uses batch-processed `fdfind` subshell evaluations to securely monitor NFS network mounts, comparing exact metadata timestamps without spamming CPU usage.
 - **Tmux Integration**: Native remote host-jumping. Automatically creates and launches itself inside a detached `glance_watcher` tmux session on the target host.
+
+### Usage
+
+```bash
+/data/linux/scripts/glance_watcher.sh
+```
+
+### Flags
+
+- `--directory`: Directory to watch for modifications. (default: `/data/docker/glance/config`)
+- `--service_name`: Name of the swarm service to force update. (default: `dash_glance`)
+- `--host`: Host to execute the watcher on. Opens a tmux session remotely. (default: `once`)
+- `--sleep_secs`: Seconds to sleep between loop iterations. (default: `2`)
 
 ## scripts/glance_youtube.py
 
