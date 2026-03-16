@@ -14,10 +14,23 @@ RED    = "\033[31m"
 CYAN   = "\033[36m"
 WHITE  = "\033[97m"
 
-def log_success(text: str): Halo().succeed(f"{BOLD}{text}{RESET}")
-def log_fail(text: str):    Halo().fail(f"{BOLD}{RED}{text}{RESET}")
-def log_warn(text: str):    Halo().warn(f"{BOLD}{YELLOW}{text}{RESET}")
-def log_info(text: str):    Halo().info(f"{BOLD}{CYAN}{text}{RESET}")
+IS_TTY = sys.stdout.isatty()
+
+def log_success(text: str):
+    if IS_TTY: Halo().succeed(f"{BOLD}{text}{RESET}")
+    else: print(f"✔ {BOLD}{text}{RESET}")
+
+def log_fail(text: str):
+    if IS_TTY: Halo().fail(f"{BOLD}{RED}{text}{RESET}")
+    else: print(f"✘ {BOLD}{RED}{text}{RESET}")
+
+def log_warn(text: str):
+    if IS_TTY: Halo().warn(f"{BOLD}{YELLOW}{text}{RESET}")
+    else: print(f"⚠ {BOLD}{YELLOW}{text}{RESET}")
+
+def log_info(text: str):
+    if IS_TTY: Halo().info(f"{BOLD}{CYAN}{text}{RESET}")
+    else: print(f"ℹ {BOLD}{CYAN}{text}{RESET}")
 
 def load_lines(path):
     with open(path, 'r') as f:
@@ -188,7 +201,13 @@ def list_hosts(lines):
 
 def trigger_reload(docker_host: str) -> None:
     """Triggers the Pi-hole DNS reload natively without container restart."""
-    spinner = Halo(text=f"Reloading Pi-hole DNS on {docker_host}...", color='cyan').start()
+    msg = f"Reloading Pi-hole DNS on {docker_host}..."
+    spinner = None
+    if IS_TTY:
+        spinner = Halo(text=msg, color='cyan').start()
+    else:
+        print(f"ℹ {BOLD}{msg}{RESET}")
+
     try:
         script = 'docker exec $(docker ps -q -f name=dns_pihole | head -n 1) pihole reloaddns'
         subprocess.run(
@@ -197,13 +216,21 @@ def trigger_reload(docker_host: str) -> None:
             stdout=subprocess.DEVNULL,
             stderr=subprocess.DEVNULL
         )
-        spinner.succeed(f"{BOLD}RELOAD: Pi-hole effectively reloaded.{RESET}")
+        if spinner: spinner.succeed(f"{BOLD}RELOAD: Pi-hole effectively reloaded.{RESET}")
+        else: print(f"✔ {BOLD}RELOAD: Pi-hole effectively reloaded.{RESET}")
     except subprocess.CalledProcessError:
-        spinner.fail(f"{BOLD}{RED}RELOAD: Failed to reload dns_pihole.{RESET}")
+        if spinner: spinner.fail(f"{BOLD}{RED}RELOAD: Failed to reload dns_pihole.{RESET}")
+        else: print(f"✘ {BOLD}{RED}RELOAD: Failed to reload dns_pihole.{RESET}")
 
 def verify_dns(hostname: str, expect_found: bool = True) -> None:
-    print()
-    spinner = Halo(text=f"Verifying DNS record for {hostname}...", color='cyan').start()
+    spinner = None
+    msg = f"Verifying DNS record for {hostname}..."
+    if IS_TTY:
+        print()
+        spinner = Halo(text=msg, color='cyan').start()
+    else:
+        print(f"ℹ {BOLD}{msg}{RESET}")
+
     try:
         result = subprocess.run(
             ["dig", "@192.168.86.2", hostname],
@@ -227,19 +254,24 @@ def verify_dns(hostname: str, expect_found: bool = True) -> None:
                 
         if len(answer_lines) > 1:
             if expect_found:
-                spinner.succeed(f"{BOLD}DNS Record Found:{RESET}")
+                if spinner: spinner.succeed(f"{BOLD}DNS Record Found:{RESET}")
+                else: print(f"✔ {BOLD}DNS Record Found:{RESET}")
                 print("\n" + "\n".join(answer_lines) + "\n")
             else:
-                spinner.fail(f"{BOLD}DNS record still exists for {hostname}!{RESET}")
+                if spinner: spinner.fail(f"{BOLD}DNS record still exists for {hostname}!{RESET}")
+                else: print(f"✘ {BOLD}DNS record still exists for {hostname}!{RESET}")
                 print("\n" + "\n".join(answer_lines) + "\n")
         else:
             if expect_found:
-                spinner.warn(f"{BOLD}No DNS record found for {hostname}{RESET}\n")
+                if spinner: spinner.warn(f"{BOLD}No DNS record found for {hostname}{RESET}\n")
+                else: print(f"⚠ {BOLD}No DNS record found for {hostname}{RESET}\n")
             else:
-                spinner.succeed(f"{BOLD}No DNS record found for {hostname} (Successfully removed){RESET}\n")
+                if spinner: spinner.succeed(f"{BOLD}No DNS record found for {hostname} (Successfully removed){RESET}\n")
+                else: print(f"✔ {BOLD}No DNS record found for {hostname} (Successfully removed){RESET}\n")
             
     except Exception as e:
-        spinner.fail(f"{BOLD}{RED}DNS verification failed: {str(e)}{RESET}\n")
+        if spinner: spinner.fail(f"{BOLD}{RED}DNS verification failed: {str(e)}{RESET}\n")
+        else: print(f"✘ {BOLD}{RED}DNS verification failed: {str(e)}{RESET}\n")
 
 def main():
     parser = argparse.ArgumentParser(description="Manage Pi-hole local DNS records")

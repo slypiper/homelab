@@ -3,6 +3,8 @@ alias glance_youtube="/data/linux/scripts/glance_youtube.py"
 alias glance_watcher="/data/linux/scripts/glance_watcher.sh"
 alias glance_restart="/data/linux/scripts/glance_youtube.py --restart_glance"
 alias restart_glance="/data/linux/scripts/glance_youtube.py --restart_glance"
+alias local_dns="/data/linux/scripts/local_dns.py"
+alias new_host="/data/linux/scripts/new_host.sh"
 
 # Deprecated names, please use glance_youtube directly. 
 alias ytid_add="/data/linux/scripts/glance_youtube.py --add"

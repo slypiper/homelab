@@ -8,11 +8,44 @@ DEFINE_string "ip" "" "IP of the new install. A 1-254 number will be prepended w
 DEFINE_string "group" "" "Optional Ansible group to place the host in."
 DEFINE_string "config" "/data/linux/src/ansible/inventory.ini" "Ansible Inventory File."
 DEFINE_boolean "dns" true "Update Pi-hole Local DNS automatically."
+DEFINE_boolean "ansible_debug" false "Show verbose ansible-playbook output (-vvvv)"
 define_standard_flags
 
 FLAGS "$@" || exit 1
 eval set -- "${FLAGS_ARGV}"
 handle_quiet_mode
+
+LOG_DIR="/data/ansible/logs"
+mkdir -p "${LOG_DIR}"
+TIMESTAMP=$(date +%Y%m%d.%H%M)
+
+# Internal helper to run a command with logging and optional real-time debug streaming
+run_logged() {
+    local label=$1
+    local log_file=$2
+    shift 2 # The rest is the command
+    
+    local res=0
+    if [ "${FLAGS_debug}" -eq "${FLAGS_TRUE}" ]; then
+        # Stream live to terminal + log
+        # Force color for ansible if found in command
+        export PYTHONUNBUFFERED=1
+        if [[ "$*" == *"ansible-playbook"* ]]; then
+            export ANSIBLE_FORCE_COLOR=true
+        fi
+
+        # We use a subshell to capture the output while keeping the exit code of the command
+        stdbuf -oL -eL "$@" 2>&1 | sed -u 's/\r//g' | stdbuf -oL tee "${log_file}" | while IFS= read -r line; do
+            [[ "$line" =~ [^[:space:]] ]] && printf_debug "${label}" "$line"
+        done
+        res=${PIPESTATUS[0]}
+    else
+        # Run silent to log
+        "$@" 2>&1 | sed -u 's/\r//g' > "${log_file}"
+        res=${PIPESTATUS[0]}
+    fi
+    return $res
+}
 
 host="${FLAGS_host}"
 if [ -z "$host" ]; then
@@ -92,8 +125,16 @@ fi
 
 # Update Pi-hole Local DNS
 if [ "${FLAGS_dns}" -eq "${FLAGS_TRUE}" ]; then
+    DNS_LOG="${LOG_DIR}/${TIMESTAMP}.${host}.dns"
     printf_info "DNS" "Configuring Pi-hole local DNS for ${host}.home..."
-    /data/linux/scripts/local_dns.py --add "$ip" "${host}.home"
+    
+    if run_logged "DNS" "${DNS_LOG}" /data/linux/scripts/local_dns.py --add "$ip" "${host}.home"; then
+        printf_success "SUCCESS" "Local DNS good for ${host}.home (Logged to ${DNS_LOG})"
+    else
+        [ "${FLAGS_debug}" -eq "${FLAGS_FALSE}" ] && [ -f "${DNS_LOG}" ] && cat "${DNS_LOG}"
+        printf_error "FAILURE" "Local DNS configuration failed (Logged to ${DNS_LOG})"
+        exit 1
+    fi
 fi
 
 # Run the playbook
@@ -103,17 +144,16 @@ if [ ! -f "$PLAYBOOK" ]; then
     exit 1
 fi
 
-printf_info "ANSIBLE" "Executing ansible-playbook for ${host}..."
+ANSIBLE_LOG="${LOG_DIR}/${TIMESTAMP}.${host}.ansible"
+ANSIBLE_OPTS=()
+[ "${FLAGS_ansible_debug}" -eq "${FLAGS_TRUE}" ] && ANSIBLE_OPTS+=("-vvvv")
 
-if [ "${FLAGS_debug}" -eq "${FLAGS_TRUE}" ]; then
-    ansible-playbook -vvvv -i "${FLAGS_config}" -K -l "${host}" "$PLAYBOOK"
-else
-    ansible-playbook -i "${FLAGS_config}" -K -l "${host}" "$PLAYBOOK"
-fi
+printf_info "ANSIBLE" "Executing ansible-playbook for ${host}. (Logged to ${ANSIBLE_LOG})"
 
-if [ $? -eq 0 ]; then
+if run_logged "ANSIBLE" "${ANSIBLE_LOG}" ansible-playbook "${ANSIBLE_OPTS[@]}" -i "${FLAGS_config}" -l "${host}" "$PLAYBOOK"; then
     printf_success "SUCCESS" "Installation complete for ${host}."
 else
+    [ "${FLAGS_debug}" -eq "${FLAGS_FALSE}" ] && [ -f "${ANSIBLE_LOG}" ] && cat "${ANSIBLE_LOG}"
     printf_error "FAILURE" "Ansible playbook failed for ${host}."
     exit 1
 fi

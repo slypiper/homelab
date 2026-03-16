@@ -150,3 +150,59 @@ While the `yt/makers.yml` looks similar to:
 - UC39z4_U8Kls0llAij3RRZAQ # @3x3CustomTamar 
 - UCWizIdwZdmr43zfxlCktmNw # @AlecSteele 
 ```
+
+## scripts/local_dns.py
+
+Manages Pi-hole local DNS records by modifying the `pihole.toml` configuration. It supports adding, removing, and listing records, and automatically triggers a DNS reload on the Pi-hole container via Docker exec.
+
+### Usage
+
+```bash
+# List all records
+local_dns -l
+
+# Add a new record
+local_dns --add 192.168.86.10 test.home
+
+# Remove a record by IP or hostname
+local_dns --remove test.home
+```
+
+### Flags
+
+- `-l, --list`: List all configured Pi-hole local DNS records.
+- `--add IP HOSTNAME`: Add a local DNS record.
+- `--remove TARGET [TARGET ...]`: Remove a local DNS record by IP or Hostname.
+- `--config`: Path to `pihole.toml` (default: `/data/docker/pihole/config/pihole.toml`).
+- `--docker-host`: Docker swarm node host to run the reload command on (default: `once`).
+- `--noreload`: Do not trigger reload of the pihole DNS service.
+- `--force`: Force default selection at any prompt.
+
+### Aliases
+
+- `local_dns`: Points to `/data/linux/scripts/local_dns.py`
+
+## scripts/new_host.sh
+
+Automates the onboarding of a new host into the homelab. This script handles updating the Ansible inventory (creating groups if necessary), configuring Pi-hole DNS, and executing the installation playbook. Technical output from DNS and Ansible operations is captured in timestamped log files in `/data/ansible/logs/`.
+
+### Usage
+
+```bash
+/data/linux/scripts/new_host.sh --host dante --ip 10
+```
+
+### Flags
+
+- `--host`: Host name of the new install.
+- `--ip`: IP of the new install (1-254 suffix or full IP).
+- `--subnet`: Default IP subnet for new hosts (default: `192.168.86`).
+- `--group`: Optional Ansible group to place the host in.
+- `--config`: Ansible Inventory File path.
+- `--dns / --nodns`: Update Pi-hole Local DNS automatically (default: `true`).
+- `--ansible_debug`: Show verbose ansible-playbook output (-vvvv).
+- `--debug (-d)`: Enable real-time streaming of log files to the terminal.
+
+### Aliases
+
+- `new_host`: Points to `/data/linux/scripts/new_host.sh`
